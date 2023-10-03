@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<h1>HASS RTH Benchmarking Tool</h1>
+<h3>This tool is a work in progress</h3>
+<head>
+    <mHASS RTH Benchmarking Tooleta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HASS RTH Benchmarking Tool</title>
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <link rel="stylesheet" href="/static/Stolen_CSS.css" />
+    <script type="text/javascript" src="https://code.jquery.com/jquery-latest.js"></script>
+	<script src="/static/Calculator.js" type="text/javascript"></script>
+	<script type="text/javascript">
+		$(function () {
+						$('[data-toggle="tooltip"]').tooltip()
+					});
+		</script>
+</head>
+
+<body>
+	<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #0a3866;">
+		<div class="container-fluid">
+			<a href="https://www.humananimalsupportservices.org/" class="navbar-brand">
+				<img src="/static/images/logo.svg" height="45" alt="HASS Calculator">
+			</a>
+			<button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarCollapse">
+				<div class="navbar-nav">
+					<a href="https://budgetcalculator-ldz9-main-nsmk7fdqza-wm.a.run.app/" class="nav-item nav-link active">HASS RTH Benchmarking Tool</a>
+					<a href="https://budgetcalculator-ldz9-main-nsmk7fdqza-wm.a.run.app/" class="nav-item nav-link">HASS Budget Calculator</a>
+					<a href="https://www.humananimalsupportservices.org/toolkits/" class="nav-item nav-link">Toolkits</a>
+					<a href="https://www.humananimalsupportservices.org/resource-directory/" class="nav-item nav-link" tabindex="-1">Resource Directory</a>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+<div class="container-bg">
+<form id="myForm" class="card p-3 bg-light" style="width: 100%; color: #0a3866" method="post" action="/">
+  <!-- <div class="half left cf"> -->
+	<br>
+	<div class="free-text">
+		<h3>Welcome!</h3>
+		This tool estimates the dog-only RTH rate of organizations with characteristics similar to the user-provided input, based on the RTH rates of 1000+ organizations. The factors considered are those available in the data and found to have a meaningful relationship with an organization’s RTH rate, including the organization’s type and region, its total and stray intake size, and a multidimensional indicator of socioeconomic status. Unfortunately, cat RTH is often too low to produce similar estimates, but insights on cat RTH, and a more detailed description, are provided below.
+	</div>
+	<br>
+	<div class="row">
+		<div class="col-md-6">
+			<h3>Inputs</h3>
+		</div>
+		<div class="col-md-6">
+			<h3>Derived Values</h3>
+		</div>
+	</div>
+	<br>
+	<div class="row">
+		<div class="col-md-6">
+			<div class="mb-3>">
+				<label class="form-label" style="color: green;" for="input-OrgType">Organization Type</label>
+				<select name="input_OrgType" class="form-control" id="input-OrgType">
+					<option value="gov" selected="selected">Government Animal Services</option>
+					<option value="con">Shelter with Government Contract</option>
+					<option value="nocon">Shelter without Government Contract</option>
+				</select>
+			</div>
+			<div class="mb-3>">
+				<label class="form-label" style="color: green;" for="input-State">State</label>
+				<select name="input_State" class="form-control" id="input-State">
+				</select>
+			</div>
+			<div class="mb-3>">
+				<label class="form-label" style="color: green;" for="input-County">County</label>
+				<select name="input_County" class="form-control" id="input-County">
+				</select>
+			</div>
+			<div class="mb-3>">
+				<label class="form-label" style="color: green;" for="input-AllIntake">Annual Dog Intake</label>
+				<input name="input_AllIntake" type="number" class="form-control" id="input-AllIntake" placeholder="Annual dog intake">
+			</div>
+			<div class="mb-3>">
+				<label class="form-label" style="color: green;" for="input-StrayIntake">Annual Stray Dog Intake</label>
+				<input name="input_StrayIntake" type="number" class="form-control" id="input-StrayIntake" placeholder="Annual stray Dog Intake">
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="mb-3>">
+				<label class="form-label" style="color: red;" for="output-PercStray">Percent Stray Intake</label>
+				<input name="output_PercStray" type="text" class="form-control" id="output-PercStray" placeholder="The percent of all intakes which were stray">
+			</div>
+			<div class="mb-3>">
+				<label class="form-label" style="color: red;" for="output-Region">Region</label>
+				<input name="output_Region" type="text" class="form-control" id="output-Region" placeholder="Region">
+			</div>
+			<div class="mb-3>">
+				<label class="form-label" style="color: red;" for="output-SVI">Social Vulnerability Index Value (2020)</label>
+				<input name="output_SVI" type="text" class="form-control" id="output-SVI" placeholder="SVI Value">
+			</div>
+		</div>
+	</div>	
+	
+	<br>
+	<div class="row">
+		<div class="col text-center">
+			<button type="button" style="width: 25%;" onclick="MasterCalculator()">Calculate Your RTH Rate Benchmark</button>
+		</div>
+	  </div>
+
+	<br>
+    <h3>Results</h3>
+
+	<div class="row">
+		<div class="col-lg-3"></div>
+		<div class="col-lg-6">
+			<div class="mb-3>">
+				<label class="form-label" style="color: red;" for="output-Prediction">RTH Rate Benchmark</label>
+				<input name="output_Prediction" type="text" class="form-control" step=".01" id="output-Prediction" placeholder="">
+			</div>
+		</div>
+		<div class="col-lg-3"></div>
+	</div>
+	<br>
+	What does this result mean? [TBD]
+ 	
+	<br><br>
+    <h3>How it all works</h3>
+
+	<div class="free-text">
+		<details>
+			<summary>What is your definition of RTH Rate?</summary>
+			<p>Since counting RTH outcomes alone makes it difficult to compare performance across shelters of varying sizes, we normally define a shelter’s RTH ‘rate’ as the percentage of stray intakes that have an RTH outcome. This ensures the rate is measuring RTH in the context of lost and found pets, as opposed to cases like custody or seizures, in which the owner is known. However, from our engagement with shelters across the industry, RTH rates are not always measured this way. For this tool, we wanted to include the largest number of organizations possible in our dataset, for which data from Shelter Animal Counts (SAC) is most helpful. Unfortunately, from data reported to SAC, it is impossible to know which of the reported outcomes were stray intakes. As a proxy, SAC reports the percentage of RTH outcomes out of the total outcomes as an RTH rate. We found that while this rate varies from what we would consider the ‘true’ RTH rate in individual shelters, it is fairly accurate on average, both over- and underestimating the rate calculated using stray intakes only in different cases. As it enables us to access the breadth of SAC data, this is the RTH rate used in this tool.</p>
+		</details>
+		<details>
+			<summary>How did you arrive at these particular characteristics?</summary>
+			<p>We wanted to provide our pilot shelters, and any other interested organizations, with a data-driven method to come up with a goal for RTH rate to guide lost pet reunification efforts and understand where they stand relative to other organizations. We recognized that different kinds of organizations have different capacities for RTH – for example, we assumed that an organization taking in 200 stray animals annually will have an easier time returning 30% of them home than an organization taking in 2000 animals. There are also many factors other than intake volume that would presumably affect RTH rates. So the task at hand was to first identify factors that influence RTH rates (like intake size), and then be able to produce estimated RTH rates for organizations based on them. We used simple statistical modeling to achieve just that, and the results of this model are used to select the factors that will be used to generate the estimates, and identify how each factor should affect the result. The factors we identified appear in the input section or are derived from them (for example, we ask for a US state, but the model only uses the region each state is classified into – see further explanation later). An organization can insert these few simple details and receive a ‘predicted’ RTH rate, which can be interpreted as the RTH rate that is expected for organizations of their kind, given the RTH rates of all organizations in the data.</p>
+		</details>
+		<details>
+			<summary>What are the features actually used in the calculation and how do they affect the result?</summary>
+			<ul>
+				<li>Organization type - using SAC’s classification. Government shelters > nonprofits with contract > non profits without contract. Rescues were not included as they do not typically take in stray/loose pets and partake in significant reunification efforts.</li>
+				<li>Region - a standard division based on the chosen US state into Northeast, Midwest (equivalent to each other), West (higher rates), and South (lower rates).</li>
+				<li>Annual stray intakes – referring to stray intake only, and grouped into four categories: up to 500, 500-1500, 1500-3000, and 3000+. The higher the group, the lower the RTH rate. While the essence of this is that intake volume matters, there is nothing set in stone about these particular thresholds, but they arose from the available data as a good fit.</li>
+				<li>The percentage of all intakes that are stray – this reflects the centrality of stray intakes and in turn the potential importance of lost/loose pet reunification efforts – higher percentages predict higher RTH rates.</li>
+				<li><a href="https://www.atsdr.cdc.gov/placeandhealth/svi/index.html" target="_blank">Social Vulnerability Index</a> (SVI) for the county in which the organization is located – this is a rough-yet-effective way of capturing multiple dimensions of the socioeconomic situation of people served by the shelter. A higher SVI score, which means higher level of vulnerability, means lower RTH rate. Other, more specific indicators like household income and poverty rates were also attempted and behaved similarly.</li>
+			  </ul>
+		</details>
+		<details>
+			<summary>What data was used and which organizations are included in it?</summary>
+			<ul> 
+				<li>The data used to model RTH rates is the full SAC database from years 2019-2022 inclusive, provided generously by SAC [NOTE: WE MIGHT NEED TO CITE/ASK PERMISSION BEFORE PUBLISHING?]. </li>
+				<li>Only organizations with complete contributions were included on a per-year basis (e.g an organization that had a full year in 2022 but 10 months in 2021 will have the former included in the data, but not the latter). A zero-intake month also counted as a missing month. </li>
+				<li>As mentioned above, organizations classified by SAC as rescues were excluded, as were organizations with less than 100 stray intakes, a threshold used to obtain a reliable RTH rate while accommodating for organizations of different sizes. </li>
+				<li>At first, separate models were built for cats and dogs, as their RTH rates normally vary significantly. As analysis unfolded, we found that due to the low RTH rates in most shelters (~2%), there isn’t a whole lot of effective modeling we can do to provide benchmarks. Therefore, the tool was designed for dog RTH rates (hence asking for annual and stray dog intake). Some data about cat RTH data is mentioned below.</li>
+				<li>After this preprocessing, data from the remaining 1009 organizations was used to build the model and share its results through this tool. These include 442 Government shelters, 380 nonprofits with contracts and 187 nonprofits without contracts. 468 of the organizations are located in the South, 260 in the West, 213 Midwest, and 68 Northeast.</li>
+			</ul>
+		</details>
+		<details>
+			<summary>What about cats and cat RTH?</summary>
+			<p>Cats have significantly lower RTH rates than dogs, so low that it made elaborate benchmarking unhelpful. The average RTH rate for cats across 1095 with complete cat data (filtered like dog data above) was 2%. One adjustment we made was including only cats reported in the Adult age category (as opposed to Youth or Age Unknown, the other two SAC categories), as young cats less likely to be owned. This brings the average to 5% – still pretty low. Nevertheless, there are organizations out there achieving really impressive numbers – 212 organizations recorded over 10% RTH rate for cats, and 18 have gone over 30%! These higher cat RTH organizations exist across all regions, organization types, and levels of social and economical vulnerability. One organization who achieved a 35% cat RTH rate had over 3,000 stray cat intakes that year, and another returned home 16% of 9000+ stray cats!</p>
+		</details>
+		<details>
+			<summary>I have a question or comment, can I contact someone about this tool?</summary>
+			<p>Of course! We would love to hear your suggestions or hear any feedback. Please contract <a href="mailto:tom.kremer@americanpetsalive.org">tom.kremer@americanpetsalive.org</a></p>
+		</details>
+	</div>
+
+</form>
+</div>
+
+</body>
+</html>
