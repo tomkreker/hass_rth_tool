@@ -38,11 +38,11 @@ app.get('/svi/:state/:county', (req, res) => {
   });
   
 //mongoose.connect("mongodb+srv://AmPAHASS:allsheltersplease@testingcluster.g0jphxj.mongodb.net/BudgetCalculator", {useNewUrlParser: true}, {useUnifiedTopology: true})
-
+/*
 main().catch(err => console.log(err));
 async function main() {
   await mongoose.connect("mongodb+srv://AmPAHASS:allsheltersplease@testingcluster.g0jphxj.mongodb.net/BudgetCalculator", {useNewUrlParser: true}, {useUnifiedTopology: true});
-}
+}*/
 
 const hostname = '0.0.0.0';
 const port = 3000;
