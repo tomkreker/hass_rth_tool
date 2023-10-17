@@ -1,13 +1,14 @@
-function strayPets(){
-  // shows the percent of intakes that are stray on the output side
-  var total = document.getElementById('input-AllIntake').value;
-  var stray = document.getElementById('input-StrayIntake').value;
-  if (stray > total){
-    document.getElementById('output-PercStray').value = 'Stray intake cannot be larger than total intake';}
-  else  if (stray === null | total === null){
-    document.getElementById('output-PercStray').value = null;}
-  else {
-    document.getElementById('output-PercStray').value = Math.round(+stray / +total * 100)+'%';
+function strayPets() {
+  var total = parseFloat(document.getElementById('input-AllIntake').value);
+  var stray = parseFloat(document.getElementById('input-StrayIntake').value);
+  var outputPerc = document.getElementById('output-PercStray');
+
+  if (isNaN(total) || isNaN(stray)) {
+    outputPerc.value = null;
+  } else if (stray > total) {
+    outputPerc.value = 'Stray intake cannot be larger than total intake';
+  } else {
+    outputPerc.value = Math.round((stray / total) * 100) + '%';
   }
 }
 
@@ -15,6 +16,7 @@ function MasterCalculator() {
 	// Define coefficients for each region and organization type
   // no intercept - embedded into org type
   const coefficients = {
+    'intercept': 0.23239,
     'West': 0.0507,
     'Midwest': 0, // baseline
     'Northeast': 0.0305,
@@ -71,6 +73,7 @@ function MasterCalculator() {
     }
 
     // get coefficients - numeric are always the same, categorical are based on the chosen value
+    const intercept = coefficients['intercept'];
     const sviCoef = coefficients['SVI'];
     const percstrayCoef = coefficients['perc_stray'];
     const regionCoef = coefficients[region];
@@ -79,9 +82,18 @@ function MasterCalculator() {
 
     // Calculate the value based on coefficients and SVI
     console.log('svi, region, orgtype, perc_stray, intake_size', '\nvalues: ',svi, region, orgtype, perc_stray, intake_size, '\ncoefs: ', sviCoef, regionCoef, orgCoef, percstrayCoef, intakeCoef);
-    const calculatedValue = svi * sviCoef + perc_stray * percstrayCoef + regionCoef + orgCoef + intakeCoef;
+    var calculatedValue = intercept + svi * sviCoef + perc_stray * percstrayCoef + regionCoef + orgCoef + intakeCoef;
     console.log('calc value', calculatedValue)
-    document.getElementById('output-Prediction').value = Math.round(+calculatedValue * 100) + '%';	
+
+    const min_value = 0.1 // define the minimal RTH benchmark of the tool
+    if (calculatedValue < min_value){calculatedValue = min_value;}
+
+    // update output with the rate
+    document.getElementById('output-Prediction').value = 'Your Benchkmark: '+Math.round(+calculatedValue * 100) + '%';	
+    
+    // show result text
+    document.getElementById('output-Text').style.display = "block"; 
+
     //document.getElementById('myForm').submit();
   }
 }
@@ -154,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const outputSVI = document.getElementById('output-SVI'); 
   const strayInput = document.getElementById('input-StrayIntake'); 
   const totalInput = document.getElementById('input-AllIntake'); 
+  const outputText = document.getElementById('output-Text'); 
 
   // Event listener for state selection change
   stateSelect.addEventListener('change', () => {
@@ -210,8 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
   totalInput.addEventListener('change', () => {
     strayPets();
   });
-
+  // turn result text off - it is shown when button is clicked
+  outputText.style.display = "none";
 });
 
 
-// up next: verify calculation is correct, fetch thet correct coefficients, add text, deploy, perhaps DB
