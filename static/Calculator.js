@@ -13,23 +13,22 @@ function strayPets() {
 }
 
 function MasterCalculator() {
-	// Define coefficients for each region and organization type
-  // no intercept - embedded into org type
+	// Define coefficients using model results
   const coefficients = {
     'intercept': 0.23239,
     'West': 0.0507,
     'Midwest': 0, // baseline
     'Northeast': 0.0305,
     'South': -0.0889,
-    'gov' : 0.2803, // Government Animal Services
-    'con' : 0.2324, // Shelter with Government Contract
-    'nocon' : 0.166, // Shelter without Government Contract
+    'gov' : 0.048, // Government Animal Services
+    'con' : 0, // Shelter with Government Contract - baseline
+    'nocon' : -0.0664, // Shelter without Government Contract
     'SVI' : -0.1736,
-    'perc_stray' : 0.3142, // like 0.31 for each 0.1 increase 
+    'perc_stray' : 0.3142, // equivalent to 0.031 for each 0.1 increase 
     'intake_100-500': 0, // baseline
-    'intake_500-1500': -0.0385, // can communicate as 4% 
-    'intake_1500-3000': -0.0665, // communicate as 8% for simplicity
-    'intake_3000+': -0.1149 // communicate as 12%?
+    'intake_500-1500': -0.0385,  
+    'intake_1500-3000': -0.0665, 
+    'intake_3000+': -0.1149 
   };
 
   // get selected values
@@ -81,18 +80,28 @@ function MasterCalculator() {
     const intakeCoef = coefficients[intake_group];
 
     // Calculate the value based on coefficients and SVI
-    console.log('svi, region, orgtype, perc_stray, intake_size', '\nvalues: ',svi, region, orgtype, perc_stray, intake_size, '\ncoefs: ', sviCoef, regionCoef, orgCoef, percstrayCoef, intakeCoef);
     var calculatedValue = intercept + svi * sviCoef + perc_stray * percstrayCoef + regionCoef + orgCoef + intakeCoef;
-    console.log('calc value', calculatedValue)
+    //console.log('svi, region, orgtype, perc_stray, intake_size', '\nvalues: ',svi, region, orgtype, perc_stray, intake_size, '\ncoefs: ', sviCoef, regionCoef, orgCoef, percstrayCoef, intakeCoef);
+    //console.log('calc value', calculatedValue)
 
     const min_value = 0.1 // define the minimal RTH benchmark of the tool
     if (calculatedValue < min_value){calculatedValue = min_value;}
 
     // update output with the rate
-    document.getElementById('output-Prediction').value = 'Your Benchkmark: '+Math.round(+calculatedValue * 100) + '%';	
+    document.getElementById('output-Prediction').value = 'Your Benchmark: '+Math.round(+calculatedValue * 100) + '%';	
     
     // show result text
     document.getElementById('output-Text').style.display = "block"; 
+
+    // set high performence text based on hardcoded top performing shelters by size and type:
+    const high_perf_values = {
+      'intake_100-500': {'gov': 85, 'con':80, 'noncon': 69}, // baseline
+      'intake_500-1500': {'gov':75, 'con':66, 'noncon':57},  
+      'intake_1500-3000': {'gov':80, 'con':55, 'noncon':25}, 
+      'intake_3000+': {'gov':71, 'con':38, 'noncon':24}
+    };
+    document.getElementById('output-Highperf').innerHTML = 'The highest RTH rate recorded for an organization of your type and intake size was '+
+       high_perf_values[intake_group][orgtype]+'%.';
 
     //document.getElementById('myForm').submit();
   }
