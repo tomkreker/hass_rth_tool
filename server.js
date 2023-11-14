@@ -61,7 +61,7 @@ app.get("/", function(req, res) {
     res.sendFile(__dirname + "/index.html");
 })
 
-// post legacy from budget calc
+// post legacy from budget calc 
 app.post("/", function(req, res) {
     let newResult = new Result ({
         Shelter: req.body.input_name,
