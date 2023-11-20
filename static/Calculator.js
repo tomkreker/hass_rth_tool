@@ -1,8 +1,10 @@
 function strayPets() {
+  // dynamically displays the value of percentage of stray intakes of total intakes in Derived Values
   var total = parseFloat(document.getElementById('input-AllIntake').value);
   var stray = parseFloat(document.getElementById('input-StrayIntake').value);
   var outputPerc = document.getElementById('output-PercStray');
 
+  // if either of the values is missing, no value. if stray > total, does not make sense. otherwise, present as %
   if (isNaN(total) || isNaN(stray)) {
     outputPerc.value = null;
   } else if (stray > total) {
@@ -13,7 +15,11 @@ function strayPets() {
 }
 
 function MasterCalculator() {
-	// Define coefficients using model results
+  // master function used to perform the calculation and produce a benchmark
+
+	// Define coefficients using model results - hardcoded
+  // The model is based on Tom's analysis of RTH rates using SAC data 
+  // It is a linear model of the format rth_rate ~ org_type + region + percent_stray+ intake_size_group + SVI
   const coefficients = {
     'intercept': 0.23239,
     'West': 0.0507,
@@ -31,7 +37,7 @@ function MasterCalculator() {
     'intake_3000+': -0.1149 
   };
 
-  // get selected values
+  // get selected values based on user input
   var svi = parseFloat(document.getElementById('output-SVI').value); // Example SVI value
   var region = document.getElementById('output-Region').value;
   var orgtype = document.getElementById('input-OrgType').value;
@@ -71,7 +77,7 @@ function MasterCalculator() {
       intake_group = 'intake_3000+';
     }
 
-    // get coefficients - numeric are always the same, categorical are based on the chosen value
+    // get the correct coefficients - numeric are always the same, categorical are based on the chosen value
     const intercept = coefficients['intercept'];
     const sviCoef = coefficients['SVI'];
     const percstrayCoef = coefficients['perc_stray'];
@@ -93,7 +99,7 @@ function MasterCalculator() {
     // show result text
     document.getElementById('output-Text').style.display = "block"; 
 
-    // set high performence text based on hardcoded top performing shelters by size and type:
+    // set high performence text based on hardcoded top performing shelters by size and type (same data as produced the model)
     const high_perf_values = {
       'intake_100-500': {'gov': 85, 'con':80, 'noncon': 69}, // baseline
       'intake_500-1500': {'gov':75, 'con':66, 'noncon':57},  
@@ -108,7 +114,8 @@ function MasterCalculator() {
 }
 
 function states(){
-// Define the list of US states
+  // this function is loaded upon initialization to load state list and an empty county list which gets updated once a state is selected
+  // Define the list of US states
 	var state_arr = [
 	"Select State",	"Alabama",	"Alaska",	"Arizona",	"Arkansas",	"California",	"Colorado",	"Connecticut",	"Delaware",	"District of Columbia",
   "Florida",	"Georgia",	"Hawaii",	"Idaho",	"Illinois",	"Indiana",	"Iowa",	"Kansas",	"Kentucky",	"Louisiana",	"Maine",	"Maryland",
@@ -130,7 +137,8 @@ function states(){
 	// init counties array
 	var county_arr = ["Select County"];
 	var countySelect = document.getElementById("input-County");
-
+  
+  // populate counties array - starts empty and gets updated once a state is selected below
 	county_arr.forEach(function(c) {
 	  var option = document.createElement("option");
 	  option.text = c;
@@ -179,36 +187,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event listener for state selection change
   stateSelect.addEventListener('change', () => {
-      const selectedState = stateSelect.value; // selected value of state
+    const selectedState = stateSelect.value; // selected value of state
 
-      // update region
-      const selectedRegion = getStateRegion(selectedState);
-      outputRegion.textContent = selectedRegion; // Update the output element
-      outputRegion.value = selectedRegion;
+    // update region based on selected state
+    const selectedRegion = getStateRegion(selectedState);
+    outputRegion.textContent = selectedRegion; // Update the output element
+    outputRegion.value = selectedRegion;
 
-       // update counties - HTTP request to get counties from the json data
-      fetch(`/counties/${selectedState}`)
-        .then(response => response.json())
-        .then(counties => {
-            // Clear existing options
-            countySelect.innerHTML = '';
-            if (counties.length === 0) {
-              // If no counties, create an option with the selected state
-              const option = document.createElement('option');
-              option.value = selectedState;
-              option.textContent = selectedState;
-              countySelect.appendChild(option);
-           }  else { // make the counties the options in the County select
-              counties.forEach(county => {
-                  const option = document.createElement('option');
-                  option.value = county;
-                  option.textContent = county;
-                  countySelect.appendChild(option);
-              });
-              // Trigger a change event on county select to fetch SVI for the first county
-              countySelect.dispatchEvent(new Event('change'));
-            }
-      });
+      // update counties - HTTP request to get counties from the json data
+    fetch(`/counties/${selectedState}`)
+      .then(response => response.json())
+      .then(counties => {
+          // Clear existing options
+          countySelect.innerHTML = '';
+          if (counties.length === 0) {
+            // If no counties, create an option with the selected state
+            const option = document.createElement('option');
+            option.value = selectedState;
+            option.textContent = selectedState;
+            countySelect.appendChild(option);
+          }  else { // make the counties the options in the County select
+            counties.forEach(county => {
+                const option = document.createElement('option');
+                option.value = county;
+                option.textContent = county;
+                countySelect.appendChild(option);
+            });
+            // Trigger a change event on county select to fetch SVI for the first county
+            countySelect.dispatchEvent(new Event('change'));
+          }
+    });
   });
 
   // event listener for county change to fetch SVI value
@@ -232,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
   totalInput.addEventListener('change', () => {
     strayPets();
   });
-  // turn result text off - it is shown when button is clicked
+  // turn result text off - it is shown when the Calculate button is clicked
   outputText.style.display = "none";
 });
 
