@@ -30,7 +30,7 @@ summary{
 
 h1 {
    text-align: center;
-   color: #003a5d; /*color: #0a3866;*/
+   color: #003a5d; 
    font-family: 'Lato', sans-serif;
    font-weight: bold;
    @include text-shadow(1px 1px 0 rgba(white, 1));
@@ -39,7 +39,7 @@ h1 {
 h3 {
    text-align: center;
    font-weight: bold;
-   /*font-family: 'Lato', sans-serif;*/
+   font-family: 'Lato', sans-serif;
    color: #003a5d;
    @include text-shadow(1px 1px 0 rgba(white, 1));
 }
@@ -64,6 +64,10 @@ form {
    margin-bottom: auto;
    margin-right: auto;
    margin-left: auto;
+
+   select {
+      margin-bottom: 0.3em;
+   }
   
   input, textarea {
      border:0; outline:0;
@@ -71,7 +75,8 @@ form {
      @include border-radius(8px);
      display: block;
      width: 100%;
-     margin-top: 1em;
+     /*margin-top: 1em;*/
+     margin-bottom: 0.3em;
      @include box-shadow(0 1px 1px rgba(black, 0.1));
      resize: none;
     
