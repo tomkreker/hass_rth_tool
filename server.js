@@ -12,13 +12,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use('/static', express.static(__dirname + '/static'));
 
 // Read the JSON file with state and county data + svi data
-const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'counties_list.json')));
+//const data = JSON.parse(fs.readFileSync(path.join(__dirname, 'counties_list.json'))); // using the SVI file for loading counties
 const data_svi = JSON.parse(fs.readFileSync(path.join(__dirname, 'svi_county_2020.json')));
 
 // code to make it possible to make a request for the counties when a state is chosen
 app.get('/counties/:state', (req, res) => {
   const state = req.params.state;
-  const counties = data.filter(entry => entry.State === state).map(entry => entry.County);
+  const counties = data_svi.filter(entry => entry.STATE === state).map(entry => entry.COUNTY); // changed from data to data_svi and State to STATE, County to COUNTY
   res.json(counties);
 });
 
